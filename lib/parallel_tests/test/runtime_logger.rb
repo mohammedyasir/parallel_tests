@@ -9,19 +9,13 @@ module ParallelTests
 
       class << self
         def log_test_run(test)
-          puts 'prepare'
-          puts prepare
+          prepare
 
           result = nil
           time = ParallelTests.delta { result = yield }
-          puts 'time'
-          puts time
-          puts log(test, time)
+          log(test, time)
 
-          res = result
-          puts 'res'
-          puts res
-          res
+          result
         end
 
         def unique_log
@@ -41,10 +35,8 @@ module ParallelTests
         private
 
         def with_locked_log
-          puts 'logfile'
-          puts logfile
           File.open(logfile, File::RDWR | File::CREAT) do |logfile|
-            puts logfile.flock(File::LOCK_EX)
+            logfile.flock(File::LOCK_EX)
             yield logfile
           end
         end
@@ -102,9 +94,7 @@ if defined?(Minitest::Runnable) # Minitest 5
       Module.new do
         def run(*args)
           result = super
-          puts 'result'
-          puts result
-          puts ParallelTests::Test::RuntimeLogger.unique_log
+          ParallelTests::Test::RuntimeLogger.unique_log
           result
         end
       end
